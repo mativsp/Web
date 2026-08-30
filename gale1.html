@@ -1,202 +1,1735 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Galería de Videos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    :root {
-      --color-primary: #4a4a4a;
-      --color-text: #2c3e50;
-      --color-background: #f5f5f5;
-    }
+    <title>Galería de Videos</title>
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--color-background);
-      color: var(--color-text);
-    }
+    <style>
 
-    /* NAV */
-    nav {
-      background-color: var(--color-primary);
-      padding: 15px 0;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-size: 1.1em;
-      padding: 10px 20px;
-      margin: 0 10px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
+        * {
+            box-sizing: border-box;
+        }
 
-    nav a:hover {
-      background-color: #616161;
-    }
+        :root {
+            --pink: #ff0f70;
+            --pink-soft: #ff3d8d;
+            --cyan: #00eaff;
 
-    h1 {
-      text-align: center;
-      margin: 40px 0 10px;
-      color: var(--color-primary);
-    }
+            --bg: #08090c;
+            --panel: #0d1014;
 
-    p {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+            --text: #eeeeee;
+            --muted: #777c84;
 
-    /* GALERÍA */
-    .gallery-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-    }
+            --line: rgba(255,255,255,.10);
+        }
 
-    .gallery-item {
-      overflow: hidden;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      display: block;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    .gallery-item video {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.3s ease;
-    }
+        body {
+            margin: 0;
 
-    .gallery-item:hover video {
-      transform: scale(1.05);
-    }
+            font-family:
+                "Space Grotesk",
+                Arial,
+                Helvetica,
+                sans-serif;
 
-    /* LIGHTBOX */
-    .lightbox {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
+            background:
 
-    .lightbox:target {
-      display: flex;
-    }
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(255,15,112,.11),
+                    transparent 28%
+                ),
 
-    .lightbox video {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 10px;
-      border: 5px solid white;
-      box-shadow: 0 0 20px rgba(255,255,255,0.5);
-    }
+                radial-gradient(
+                    circle at 90% 60%,
+                    rgba(0,234,255,.055),
+                    transparent 30%
+                ),
 
-    .close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: white;
-      font-size: 40px;
-      text-decoration: none;
-      font-weight: bold;
-      opacity: 0.8;
-    }
+                var(--bg);
 
-    .close:hover {
-      opacity: 1;
-    }
+            color: var(--text);
 
-    /* RESPONSIVE */
-    @media (max-width: 992px) {
-      .gallery-item video {
-        height: 150px;
-      }
-    }
+            overflow-x: hidden;
+        }
 
-    @media (max-width: 600px) {
-      .gallery-container {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 10px;
-        gap: 10px;
-      }
-      .gallery-item video {
-        height: 120px;
-      }
-    }
-  </style>
+
+        /* =====================================
+           EFECTO DE PANTALLA
+        ===================================== */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 100;
+
+            opacity: .08;
+
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0,
+                    transparent 3px,
+                    rgba(255,255,255,.18) 4px
+                );
+        }
+
+
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            z-index: 99;
+
+            opacity: .025;
+
+            background-image:
+                radial-gradient(
+                    rgba(255,255,255,.8) .5px,
+                    transparent .5px
+                );
+
+            background-size: 4px 4px;
+        }
+
+
+        /* =====================================
+           HEADER
+        ===================================== */
+
+        header {
+
+            position: relative;
+
+            min-height: 40vh;
+
+            padding:
+                clamp(55px, 8vw, 100px)
+                25px
+                60px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            border-bottom:
+                1px solid var(--line);
+
+            overflow: hidden;
+        }
+
+
+        /* Esquinas */
+
+        header::before,
+        header::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 12px;
+            height: 12px;
+
+            border-color: var(--pink);
+
+            opacity: .8;
+        }
+
+
+        header::before {
+
+            top: 25px;
+            left: 25px;
+
+            border-top: 1px solid;
+            border-left: 1px solid;
+        }
+
+
+        header::after {
+
+            top: 25px;
+            right: 25px;
+
+            border-top: 1px solid;
+            border-right: 1px solid;
+        }
+
+
+        /* =====================================
+           TEXTO PEQUEÑO
+        ===================================== */
+
+        .eyebrow {
+
+            font:
+                700 12px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 5px;
+
+            color: var(--pink);
+
+            margin-bottom: 25px;
+
+            text-transform: uppercase;
+        }
+
+
+        .eyebrow::before {
+
+            content: "// ";
+
+            color: var(--cyan);
+        }
+
+
+        /* =====================================
+           TÍTULO
+        ===================================== */
+
+        header h1 {
+
+            margin: 0;
+
+            max-width: 1000px;
+
+            font-size:
+                clamp(50px, 9vw, 125px);
+
+            line-height: .85;
+
+            letter-spacing: -5px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            text-shadow:
+                3px 3px 0
+                rgba(255,255,255,.06);
+        }
+
+
+        header p {
+
+            margin: 28px 0 0;
+
+            color: var(--muted);
+
+            font:
+                13px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 2px;
+        }
+
+
+        header p::before {
+
+            content: "> ";
+
+            color: var(--pink);
+        }
+
+
+        /* =====================================
+           BOTÓN VOLVER
+        ===================================== */
+
+        .volver {
+
+            display: inline-block;
+
+            width: fit-content;
+
+            margin-top: 20px;
+
+            padding: 10px 16px;
+
+            border:
+                1px solid
+                #292d33;
+
+            border-left:
+                2px solid
+                var(--pink);
+
+            background:
+                rgba(255,255,255,.02);
+
+            color: #b9bdc4;
+
+            font:
+                600 11px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 1px;
+
+            text-decoration: none;
+
+            text-transform: uppercase;
+
+            transition: .25s ease;
+        }
+
+
+        .volver:hover {
+
+            color: white;
+
+            border-color: var(--pink);
+
+            background:
+                rgba(255,15,112,.08);
+
+            transform:
+                translateX(5px);
+
+            box-shadow:
+                0 8px 25px
+                rgba(255,15,112,.10);
+        }
+
+
+        /* =====================================
+           TEXTO CENTRAL
+        ===================================== */
+
+        .texto-centro {
+
+            position: relative;
+
+            margin: 0;
+
+            padding: 25px 20px;
+
+            text-align: center;
+
+            color: #9a9da5;
+
+            font:
+                italic 14px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 3px;
+
+            border-bottom:
+                1px solid var(--line);
+
+            background:
+                rgba(255,255,255,.012);
+        }
+
+
+        .texto-centro::before,
+        .texto-centro::after {
+
+            content: "—";
+
+            color: var(--pink);
+
+            margin: 0 14px;
+        }
+
+
+        /* =====================================
+           SECCIÓN AUDIO
+        ===================================== */
+
+        .audio-section {
+
+            position: relative;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            background:
+                rgba(255,255,255,.015);
+
+            border-bottom:
+                1px solid var(--line);
+        }
+
+
+        .audio-section::before,
+        .audio-section::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 12px;
+            height: 12px;
+
+            border-color: var(--pink);
+
+            opacity: .8;
+        }
+
+
+        .audio-section::before {
+
+            bottom: 20px;
+            left: 25px;
+
+            border-bottom: 1px solid;
+            border-left: 1px solid;
+        }
+
+
+        .audio-section::after {
+
+            bottom: 20px;
+            right: 25px;
+
+            border-bottom: 1px solid;
+            border-right: 1px solid;
+        }
+
+
+        audio {
+
+            width:
+                min(80%, 600px);
+
+            filter:
+                sepia(1)
+                saturate(3)
+                hue-rotate(290deg);
+
+            opacity: .85;
+        }
+
+
+        /* =====================================
+           SECCIÓN GALERÍA
+        ===================================== */
+
+        .gallery-section {
+
+            position: relative;
+
+            padding:
+                clamp(50px, 7vw, 90px)
+                20px
+                100px;
+
+            background:
+
+                linear-gradient(
+                    rgba(255,15,112,.025),
+                    rgba(0,234,255,.015)
+                );
+
+            border-bottom:
+                1px solid var(--line);
+        }
+
+
+        .gallery-section::before {
+
+            content:
+                "ARCHIVO / VIDEOS";
+
+            display: block;
+
+            width:
+                min(94%, 1200px);
+
+            margin:
+                0 auto 15px;
+
+            color: var(--pink);
+
+            font:
+                700 11px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 4px;
+        }
+
+
+        /* =====================================
+           TÍTULO GALERÍA
+        ===================================== */
+
+        .gallery-title {
+
+            width:
+                min(94%, 1200px);
+
+            margin:
+                0 auto 10px;
+
+            font-size:
+                clamp(32px, 5vw, 65px);
+
+            line-height: 1;
+
+            letter-spacing: -2px;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =====================================
+           DESCRIPCIÓN
+        ===================================== */
+
+        .gallery-description {
+
+            width:
+                min(94%, 1200px);
+
+            margin:
+                0 auto 40px;
+
+            color:
+                var(--muted);
+
+            font:
+                12px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing: 2px;
+        }
+
+
+        .gallery-description::before {
+
+            content: "> ";
+
+            color: var(--pink);
+        }
+
+
+        /* =====================================
+           GALERÍA
+        ===================================== */
+
+        .gallery-container {
+
+            width:
+                min(94%, 1200px);
+
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 15px;
+        }
+
+
+        /* =====================================
+           TARJETA VIDEO
+        ===================================== */
+
+        .gallery-item {
+
+            position: relative;
+
+            display: block;
+
+            overflow: hidden;
+
+            border:
+                1px solid
+                #292d33;
+
+            border-left:
+                2px solid
+                var(--pink);
+
+            background:
+                #0b0e12;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition:
+                .25s ease;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,.25);
+        }
+
+
+        /* Icono ↗ */
+
+        .gallery-item::after {
+
+            content: "↗";
+
+            position: absolute;
+
+            top: 9px;
+            right: 12px;
+
+            color:
+                #555a62;
+
+            font:
+                14px
+                "JetBrains Mono",
+                monospace;
+
+            z-index: 2;
+
+            transition:
+                .25s ease;
+        }
+
+
+        /* =====================================
+           VIDEO PREVIEW
+        ===================================== */
+
+        .gallery-item video {
+
+            width: 100%;
+
+            height: 210px;
+
+            object-fit: cover;
+
+            display: block;
+
+            opacity: .82;
+
+            transition:
+                transform .35s ease,
+                opacity .35s ease,
+                filter .35s ease;
+        }
+
+
+        /* =====================================
+           HOVER
+        ===================================== */
+
+        .gallery-item:hover {
+
+            border-color:
+                var(--pink);
+
+            transform:
+                translateY(-5px);
+
+            box-shadow:
+
+                0 15px 35px
+                rgba(255,15,112,.12);
+        }
+
+
+        .gallery-item:hover video {
+
+            transform:
+                scale(1.06);
+
+            opacity: 1;
+
+            filter:
+                brightness(1.08)
+                contrast(1.05);
+        }
+
+
+        .gallery-item:hover::after {
+
+            color:
+                var(--cyan);
+        }
+
+
+        /* =====================================
+           LIGHTBOX
+        ===================================== */
+
+        .lightbox {
+
+            display: none;
+
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(4,5,7,.96);
+
+            justify-content:
+                center;
+
+            align-items:
+                center;
+
+            z-index: 1000;
+
+            padding: 30px;
+        }
+
+
+        .lightbox.active {
+
+            display: flex;
+        }
+
+
+        /* Video grande */
+
+        .lightbox video {
+
+            max-width: 92%;
+
+            max-height: 88%;
+
+            object-fit: contain;
+
+            border:
+                1px solid
+                rgba(255,15,112,.55);
+
+            box-shadow:
+
+                0 0 0 8px
+                rgba(255,255,255,.015),
+
+                0 25px 80px
+                rgba(0,0,0,.8),
+
+                0 0 40px
+                rgba(255,15,112,.12);
+        }
+
+
+        /* =====================================
+           BOTÓN CERRAR
+        ===================================== */
+
+        .close {
+
+            position: absolute;
+
+            top: 22px;
+            right: 30px;
+
+            color: white;
+
+            font:
+                35px
+                "JetBrains Mono",
+                monospace;
+
+            text-decoration: none;
+
+            transition:
+                .2s ease;
+
+            cursor: pointer;
+
+            z-index: 1001;
+        }
+
+
+        .close:hover {
+
+            color:
+                var(--pink);
+
+            transform:
+                scale(1.1);
+        }
+
+
+        /* =====================================
+           FOOTER
+        ===================================== */
+
+        footer {
+
+            position: relative;
+
+            background:
+                #06070a;
+
+            color:
+                #50545b;
+
+            text-align:
+                center;
+
+            padding:
+                35px 20px;
+
+            font:
+                10px
+                "JetBrains Mono",
+                monospace;
+
+            letter-spacing:
+                2px;
+
+            text-transform:
+                uppercase;
+        }
+
+
+        footer::before {
+
+            content:
+                "// conexión finalizada";
+
+            display: block;
+
+            margin-bottom:
+                12px;
+
+            color:
+                var(--pink);
+        }
+
+
+        footer p {
+
+            margin: 0;
+        }
+
+
+        /* =====================================
+           RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 900px) {
+
+            .gallery-container {
+
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+
+
+            .gallery-item video {
+
+                height: 190px;
+            }
+        }
+
+
+        @media (max-width: 650px) {
+
+            header {
+
+                min-height: 35vh;
+
+                padding-left: 25px;
+                padding-right: 25px;
+            }
+
+
+            header h1 {
+
+                letter-spacing: -3px;
+            }
+
+
+            .gallery-container {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+
+                gap: 10px;
+            }
+
+
+            .gallery-item video {
+
+                height: 150px;
+            }
+        }
+
+
+        @media (max-width: 430px) {
+
+            header h1 {
+
+                font-size:
+                    clamp(45px, 15vw, 70px);
+            }
+
+
+            .gallery-container {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .gallery-item video {
+
+                height: 220px;
+            }
+
+
+            .texto-centro::before,
+            .texto-centro::after {
+
+                display: none;
+            }
+
+
+            audio {
+
+                width: 100%;
+            }
+        }
+
+    </style>
 </head>
+
+
 <body>
 
-  <nav>
-    <a href="index.html">Banner</a>
-  
-  </nav>
 
-  <h1>Videos</h1>
-  <p>Momentos bonitos 🎬</p>
+    <!-- =====================================
+         HEADER
+    ===================================== -->
 
-  <!-- GALERÍA DE VIDEOS -->
-  <div class="gallery-container">
+    <header>
 
-    <a href="#video1" class="gallery-item">
-      <video src="video1.mp4" muted></video>
-    </a>
+        <div class="eyebrow">
+            Archivo de recuerdos
+        </div>
 
-    <a href="#video2" class="gallery-item">
-      <video src="video2.mp4" muted></video>
-    </a>
 
-    <a href="#video3" class="gallery-item">
-      <video src="video3.mp4" muted></video>
-    </a>
+        <h1>
+            Videos<br>
+            Wiiwiwi
+        </h1>
 
-    
-       <a href="#video5" class="gallery-item">
-      <video src="video5.mp4" muted></video>
-    </a>
 
-  </div>
+        <p>
+            Momentos bonitos almacenados
+        </p>
 
-  <!-- LIGHTBOX VIDEOS -->
-  <div id="video1" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <video src="video1.mp4" controls autoplay></video>
-  </div>
 
-  <div id="video2" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <video src="video2.mp4" controls autoplay></video>
-  </div>
+        <a
+            href="inicio.html"
+            class="volver"
+        >
+            ← Volver al inicio
+        </a>
 
-  <div id="video3" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <video src="video3.mp4" controls autoplay></video>
-  </div>
+    </header>
 
-  
-   <div id="video5" class="lightbox">
-    <a href="#" class="close">&times;</a>
-    <video src="video5.mp4" controls autoplay></video>
-  </div>
+
+    <!-- =====================================
+         TEXTO
+    ===================================== -->
+
+    <p class="texto-centro">
+        Momentos bonitos 🎬
+    </p>
+
+
+    <!-- =====================================
+         AUDIO
+    ===================================== -->
+
+    <section class="audio-section">
+
+        <audio controls>
+
+            <source
+                src="inthesea.mp3"
+                type="audio/mpeg"
+            >
+
+        </audio>
+
+    </section>
+
+
+    <!-- =====================================
+         GALERÍA
+    ===================================== -->
+
+    <section class="gallery-section">
+
+
+        <h2 class="gallery-title">
+
+            Galería / Videos
+
+        </h2>
+
+
+        <p class="gallery-description">
+
+            16 videitos bien guardados wiwiwi
+
+        </p>
+
+
+        <div class="gallery-container">
+
+
+            <!-- VIDEO 1 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video1"
+            >
+
+                <video
+                    src="vid/video1.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 2 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video2"
+            >
+
+                <video
+                    src="vid/video2.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 3 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video3"
+            >
+
+                <video
+                    src="vid/video3.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 4 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video4"
+            >
+
+                <video
+                    src="vid/video4.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 5 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video5"
+            >
+
+                <video
+                    src="vid/video5.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 6 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video6"
+            >
+
+                <video
+                    src="vid/video6.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 7 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video7"
+            >
+
+                <video
+                    src="vid/video7.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 8 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video8"
+            >
+
+                <video
+                    src="vid/video8.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 9 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video9"
+            >
+
+                <video
+                    src="vid/video9.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 10 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video10"
+            >
+
+                <video
+                    src="vid/video10.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 11 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video11"
+            >
+
+                <video
+                    src="vid/video11.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 12 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video12"
+            >
+
+                <video
+                    src="vid/video12.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+
+            <!-- VIDEO 13 -->
+
+            <a
+                href="#"
+                class="gallery-item"
+                data-video="video13"
+            >
+
+                <video
+                    src="vid/video13.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+  <a
+                href="#"
+                class="gallery-item"
+                data-video="video14"
+            >
+
+                <video
+                    src="vid/video14.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+  <a
+                href="#"
+                class="gallery-item"
+                data-video="video15"
+            >
+
+                <video
+                    src="vid/video15.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+  <a
+                href="#"
+                class="gallery-item"
+                data-video="video16"
+            >
+
+                <video
+                    src="vid/video16.mp4"
+                    muted
+                    preload="metadata"
+                ></video>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================
+         LIGHTBOX VIDEOS
+    ===================================== -->
+
+
+    <div id="video1" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video1.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video2" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video2.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video3" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video3.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video4" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video4.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video5" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video5.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video6" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video6.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video7" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video7.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video8" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video8.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video9" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video9.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video10" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video10.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video11" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video11.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video12" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video12.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+    </div>
+
+
+    <div id="video13" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video13.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+
+
+    </div>
+
+  <div id="video14" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video14.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+
+
+    </div>
+
+
+  <div id="video15" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video15.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+
+
+    </div>
+
+  <div id="video16" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video16.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+
+
+    </div>
+
+
+  <div id="video17" class="lightbox">
+
+        <span class="close">&times;</span>
+
+        <video
+            src="vid/video17.mp4"
+            controls
+            preload="metadata"
+        ></video>
+
+
+
+    </div>
+
+
+
+
+
+
+    <!-- =====================================
+         FOOTER
+    ===================================== -->
+
+    <footer>
+
+        <p>
+            © 2025 - Web de Matiiii |
+            No sale nada de aquí ehh Tomy
+        </p>
+
+    </footer>
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ===================================== -->
+
+    <script>
+
+        const galleryItems =
+            document.querySelectorAll('.gallery-item');
+
+        const lightboxes =
+            document.querySelectorAll('.lightbox');
+
+
+        /* =====================================
+           PAUSAR TODOS LOS VIDEOS
+        ===================================== */
+
+        function pauseAllVideos() {
+
+            document
+                .querySelectorAll('video')
+                .forEach(video => {
+
+                    video.pause();
+
+                });
+        }
+
+
+        /* =====================================
+           ABRIR VIDEO
+        ===================================== */
+
+        galleryItems.forEach(item => {
+
+            item.addEventListener(
+                'click',
+                function(e) {
+
+                    e.preventDefault();
+
+
+                    /* Pausar todos */
+
+                    pauseAllVideos();
+
+
+                    /* Obtener ID */
+
+                    const videoId =
+                        this.dataset.video;
+
+
+                    const lightbox =
+                        document.getElementById(videoId);
+
+
+                    const video =
+                        lightbox.querySelector('video');
+
+
+                    /* Mostrar */
+
+                    lightbox.classList.add('active');
+
+
+                    /* Reiniciar */
+
+                    video.currentTime = 0;
+
+
+                    /* Reproducir */
+
+                    video.play().catch(error => {
+
+                        console.log(
+                            "El navegador bloqueó la reproducción automática:",
+                            error
+                        );
+
+                    });
+
+                }
+            );
+
+        });
+
+
+        /* =====================================
+           CERRAR LIGHTBOX
+        ===================================== */
+
+        lightboxes.forEach(lightbox => {
+
+
+            const closeButton =
+                lightbox.querySelector('.close');
+
+
+            const video =
+                lightbox.querySelector('video');
+
+
+            /* BOTÓN X */
+
+            closeButton.addEventListener(
+                'click',
+                function(e) {
+
+                    e.stopPropagation();
+
+
+                    video.pause();
+
+                    video.currentTime = 0;
+
+
+                    lightbox.classList.remove('active');
+
+                }
+            );
+
+
+            /* CLIC FUERA */
+
+            lightbox.addEventListener(
+                'click',
+                function(e) {
+
+                    if (e.target === lightbox) {
+
+                        video.pause();
+
+                        video.currentTime = 0;
+
+                        lightbox.classList.remove(
+                            'active'
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /* EVITAR CERRAR SOBRE VIDEO */
+
+            video.addEventListener(
+                'click',
+                function(e) {
+
+                    e.stopPropagation();
+
+                }
+            );
+
+        });
+
+
+        /* =====================================
+           CERRAR CON ESC
+        ===================================== */
+
+        document.addEventListener(
+            'keydown',
+            function(e) {
+
+                if (e.key === 'Escape') {
+
+                    lightboxes.forEach(
+                        lightbox => {
+
+                            if (
+                                lightbox.classList
+                                .contains('active')
+                            ) {
+
+                                const video =
+                                    lightbox
+                                    .querySelector('video');
+
+
+                                video.pause();
+
+                                video.currentTime = 0;
+
+
+                                lightbox.classList
+                                    .remove('active');
+
+                            }
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+    </script>
 
 
 </body>
 </html>
-
